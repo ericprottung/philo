@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_philosophers_helpers.c                          :+:      :+:    :+:   */
+/*   philosophers_helpers.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eprottun <eprottun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:33:47 by eprottun          #+#    #+#             */
-/*   Updated: 2025/09/05 16:55:52 by eprottun         ###   ########.fr       */
+/*   Updated: 2025/11/08 13:58:49 by eprottun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_philosophers.h"
+#include "philosophers.h"
 
 int	ft_atoi(const char *str)
 {
@@ -39,7 +39,7 @@ int	ft_atoi(const char *str)
 	return ((int)return_number);
 }
 
-void	ft_init_rules(t_shared *shared, int argc, char *argv[])
+void	init_rules(t_shared *shared, int argc, char *argv[])
 {
 	if (argc == 1)
 	{
@@ -52,4 +52,25 @@ void	ft_init_rules(t_shared *shared, int argc, char *argv[])
 	shared->sleep_time = ft_atoi(argv[4]);
 	if (argc >= 6)
 		shared->meal_amount = ft_atoi(argv[5]);
+	else
+		shared->meal_amount = -1;
+}
+
+long long 	ft_get_current_time(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
+void	ft_end(t_philosopher *me, int reason)
+{
+	size_t	iter;
+	
+	if (reason == DEATH)
+		ft_output(me, "%lld %d died\n", YES);
+	pthread_mutex_lock(&me->shared->output);
+	me->shared->death = 1;
+	pthread_mutex_unlock(&me->shared->output);
 }

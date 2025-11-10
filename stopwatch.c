@@ -6,38 +6,52 @@
 /*   By: eprottun <eprottun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 14:13:49 by eprottun          #+#    #+#             */
-/*   Updated: 2025/11/10 10:04:41 by eprottun         ###   ########.fr       */
+/*   Updated: 2025/11/10 16:50:43 by eprottun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static int	is_end(t_shared *shared, t_philosopher philo)
+void	ft_end(t_philosopher *philo, int reason)
 {
-	if (ft_get_current_time() - philo.last_meal > shared->time_to_die)
+	long long print_time;
+
+	pthread_mutex_lock(&philo->shared->output);
+	philo->shared->death = 1;
+	if (reason == DEATH)
 	{
-		ft_end(&philo, DEATH);
-		return (1);
+		usleep(0);
+		print_time = ft_get_current_time() - philo->shared->start_time;
+		printf("%lld %d died\n", print_time, philo->id);
 	}
-	else if (shared->meal_amount != -1 && philo.meal_count >= shared->meal_amount)
-	{
-		ft_end(&philo, 0);
-		return (1);
-	}
-	return (0);
+	pthread_mutex_unlock(&philo->shared->output);
 }
 
-static int	set_flag_end_and_prio(t_shared *shared, t_philosopher *philo)
+static int	is_end(t_shared *shared, t_philosopher *philo)
+{
+	pthread_mutex_lock(&philo->meal_info);
+	if (ft_get_current_time() - philo->last_meal > shared->time_to_die)
+	{
+		ft_end(philo, DEATH);
+		return (pthread_mutex_unlock(&philo->meal_info), YES);
+	}
+	else if (shared->meal_amount != -1 && philo->meal_count >= shared->meal_amount)
+	{
+		ft_end(philo, 0);
+		return (pthread_mutex_unlock(&philo->meal_info), YES);
+	}
+	return (pthread_mutex_unlock(&philo->meal_info), NO);
+}
+
+static int	end_check(t_shared *shared, t_philosopher *philo)
 {
 	size_t			iter;
 
 	iter = 0;
 	while (iter < shared->total_philos)
 	{
-		pthread_mutex_lock(&philo[iter].meal_info);
-		if (is_end(shared, philo[iter]) == YES)
-			return (pthread_mutex_unlock(&philo[iter].meal_info), DEATH);
-		pthread_mutex_unlock(&philo[iter].meal_info);
+		if (is_end(shared, &philo[iter]) == YES)
+			return (DEATH);
 		iter++;
 	}
 	return (0);
@@ -45,12 +59,9 @@ static int	set_flag_end_and_prio(t_shared *shared, t_philosopher *philo)
 
 void	stopwatch(t_shared *shared, t_philosopher *philo)
 {
-	long long loop_time;
-	long long loop_count;
-
 	while (1)
 	{
-		if (set_flag_end_and_prio(shared, philo) == DEATH)
+		if (end_check(shared, philo) == DEATH)
 			break;
 		usleep(2000);
 	}

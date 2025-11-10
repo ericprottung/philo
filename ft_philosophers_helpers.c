@@ -63,14 +63,3 @@ long long 	ft_get_current_time(void)
 	gettimeofday(&tv, NULL);
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
-
-void	ft_end(t_philosopher *me, int reason)
-{
-	size_t	iter;
-	
-	if (reason == DEATH)
-		ft_output(me, "%lld %d died\n", YES);
-	pthread_mutex_lock(&me->shared->output);
-	me->shared->death = 1;
-	pthread_mutex_unlock(&me->shared->output);
-}

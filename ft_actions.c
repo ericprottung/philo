@@ -6,7 +6,7 @@
 /*   By: eprottun <eprottun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:13:19 by eprottun          #+#    #+#             */
-/*   Updated: 2025/11/10 12:32:57 by eprottun         ###   ########.fr       */
+/*   Updated: 2025/11/10 17:55:05 by eprottun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	unlock_forks(t_philosopher *me, int eat_call)
 		pthread_mutex_unlock(right_fork);
 }
 
-void	ft_output(t_philosopher *me, char *msg, int eat_call)
+int	ft_output(t_philosopher *me, char *msg, int eat_call)
 {
 	long long print_time;
 	
@@ -41,19 +41,23 @@ void	ft_output(t_philosopher *me, char *msg, int eat_call)
 	pthread_mutex_lock(&me->shared->output);
 	if (me->shared->death == 1)
 	{
-		unlock_forks(me, eat_call);
-		pthread_exit(NULL);
+		pthread_mutex_unlock(&me->shared->output);
+		if (eat_call)
+			unlock_forks(me, eat_call);
+		return (1);
 	}
 	print_time = ft_get_current_time() - me->shared->start_time;
 	printf(msg, print_time, me->id);
 	pthread_mutex_unlock(&me->shared->output);
+	return (0);
 }
 
 void	ft_eat(t_philosopher *me)
 {
 	long long	start_time;
 
-	ft_output(me, "%lld %d is eating\n", BOTH);
+	if (ft_output(me, "%lld %d is eating\n", BOTH))
+		return ;
 	pthread_mutex_lock(&me->meal_info);
 	me->last_meal = ft_get_current_time();
 	start_time = me->last_meal;
@@ -68,7 +72,8 @@ void	ft_think(t_philosopher *me)
 	long long	start_time;
 	long long	think_time;
 	
-	ft_output(me, "%lld %d is thinking\n", NO);
+	if (ft_output(me, "%lld %d is thinking\n", NO))
+		return ;
 	start_time = ft_get_current_time();
 	think_time = me->shared->eat_time * 2 - me->shared->sleep_time;
 	if (think_time < 0)
@@ -81,7 +86,8 @@ void	ft_sleep(t_philosopher *me)
 {
 	size_t	start_time;
 
-	ft_output(me, "%lld %d is sleeping\n", NO);
+	if (ft_output(me, "%lld %d is sleeping\n", NO))
+		return ;
 	start_time = ft_get_current_time();
 	while (ft_get_current_time() - start_time < me->shared->sleep_time)
 		usleep(2000);

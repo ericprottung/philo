@@ -60,7 +60,7 @@ void		*odd_total_and_id(void *data);
 void		*last_id(void *data);
 long long 	ft_get_current_time();
 
-void		ft_output(t_philosopher *me, char *msg, int death_call);
+int			ft_output(t_philosopher *me, char *msg, int eat_call);
 void		ft_end(t_philosopher *me, int reason);
 void		ft_eat(t_philosopher *me);
 void		ft_think(t_philosopher *me);

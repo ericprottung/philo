@@ -6,7 +6,7 @@
 /*   By: eprottun <eprottun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 09:39:30 by eprottun          #+#    #+#             */
-/*   Updated: 2025/11/10 12:09:42 by eprottun         ###   ########.fr       */
+/*   Updated: 2025/11/10 17:53:40 by eprottun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,17 @@ void	*even_total_and_id(void *data)
 	while (1)
 	{
 		pthread_mutex_lock(right_fork);
-		ft_output(me, "%lld %d has taken a fork\n", RIGHT);
+		if (ft_output(me, "%lld %d has taken a fork\n", RIGHT))
+			return (NULL);
 		pthread_mutex_lock(left_fork);
-		ft_output(me, "%lld %d has taken a fork\n", BOTH);
+		if (ft_output(me, "%lld %d has taken a fork\n", BOTH))
+			return (NULL);
 		ft_eat(me);
 		pthread_mutex_unlock(left_fork);
 		pthread_mutex_unlock(right_fork);
 		ft_sleep(me);
-		ft_output(me, "%lld %d is thinking\n", NO);
+		if (ft_output(me, "%lld %d is thinking\n", NO))
+			return (NULL);
 	}
 	return (NULL);
 }
@@ -51,11 +54,14 @@ void	*even_total_odd_id(void *data)
 	while (1)
 	{
 		ft_sleep(me);
-		ft_output(me, "%lld %d is thinking\n", NO);
+		if (ft_output(me, "%lld %d is thinking\n", NO))
+			return (NULL);
 		pthread_mutex_lock(left_fork);
-		ft_output(me, "%lld %d has taken a fork\n", LEFT);
+		if (ft_output(me, "%lld %d has taken a fork\n", LEFT))
+			return (NULL);
 		pthread_mutex_lock(right_fork);
-		ft_output(me, "%lld %d has taken a fork\n", BOTH);
+		if (ft_output(me, "%lld %d has taken a fork\n", BOTH))
+			return (NULL);
 		ft_eat(me);
 		pthread_mutex_unlock(left_fork);
 		pthread_mutex_unlock(right_fork);
@@ -78,9 +84,11 @@ void	*odd_total_even_id(void *data)
 	while (1)
 	{
 		pthread_mutex_lock(right_fork);
-		ft_output(me, "%lld %d has taken a fork\n", RIGHT);
+		if (ft_output(me, "%lld %d has taken a fork\n", RIGHT))
+			return (NULL);
 		pthread_mutex_lock(left_fork);
-		ft_output(me, "%lld %d has taken a fork\n", BOTH);
+		if (ft_output(me, "%lld %d has taken a fork\n", BOTH))
+			return (NULL);
 		ft_eat(me);
 		pthread_mutex_unlock(left_fork);
 		pthread_mutex_unlock(right_fork);
@@ -103,9 +111,11 @@ void	*odd_total_and_id(void *data)
 	{
 		ft_think(me);
 		pthread_mutex_lock(left_fork);
-		ft_output(me, "%lld %d has taken a fork\n", LEFT);
+		if (ft_output(me, "%lld %d has taken a fork\n", LEFT))
+			return (NULL);
 		pthread_mutex_lock(right_fork);
-		ft_output(me, "%lld %d has taken a fork\n", BOTH);
+		if (ft_output(me, "%lld %d has taken a fork\n", BOTH))
+			return (NULL);
 		ft_eat(me);
 		pthread_mutex_unlock(left_fork);
 		pthread_mutex_unlock(right_fork);
@@ -127,10 +137,12 @@ void	*last_id(void *data)
 	{
 		ft_sleep(me);
 		ft_think(me);
-		pthread_mutex_lock(left_fork);
-		ft_output(me, "%lld %d has taken a fork\n", LEFT);
 		pthread_mutex_lock(right_fork);
-		ft_output(me, "%lld %d has taken a fork\n", BOTH);
+		if (ft_output(me, "%lld %d has taken a fork\n", RIGHT))
+			return (NULL);
+		pthread_mutex_lock(left_fork);
+		if (ft_output(me, "%lld %d has taken a fork\n", BOTH))
+			return (NULL);
 		ft_eat(me);
 		pthread_mutex_unlock(left_fork);
 		pthread_mutex_unlock(right_fork);

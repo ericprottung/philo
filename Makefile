@@ -2,7 +2,7 @@ NAME = philosophers
 CC = cc
 # -Wall -Wextra -Werror 
 CFLAGS = -MMD -g
-SRC = philosophers.c ft_philosophers_helpers.c ft_actions.c stopwatch.c thread_functions.c
+SRC = philosophers.c philosophers_helpers.c actions.c stopwatch.c thread_functions.c
 OBJ = $(SRC:.c=.o)
 DEP = $(SRC:.c=.d)
 
